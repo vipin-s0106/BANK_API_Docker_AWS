@@ -1,0 +1,105 @@
+********************************************************************************
+    Installing the Docker, Docker-compose and Docker CE in Ubuntu machine
+********************************************************************************
+1) Installing the Docker-
+
+  Steps -
+  a) sudo apt-get update
+  b) install packages to allow apt to use a repository over HTTPS:
+      sudo apt-get install \
+      apt-transport-https \
+      ca-certificates \
+      curl \
+      gnupg-agent \
+      software-properties-common
+  c) Add Docker’s official GPG key
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  d) Verify that you now have the key with the fingerprint
+      sudo apt-key fingerprint 0EBFCD88
+  e) Use the following command to set up the stable repository  for amd64 ubuntu
+      sudo add-apt-repository \
+      "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+      $(lsb_release -cs) \
+      stable"
+
+2) Installing the Docker CE
+
+  Steps-
+  a) sudo apt-get update
+  b) install the latest version of Docker Engine
+      sudo apt-get install docker-ce
+  c) List the versions available in your repo
+      apt-cache madison docker-ce
+  d) Verify that Docker Engine - Community is installed correctly
+      sudo docker run hello-world
+
+3) Installing the Docker compose
+  Prerequise-
+  make sure that Docker Engine installed
+
+  Steps-
+  a) Run this command to download the current stable release of Docker Compose
+      sudo curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+  b) Apply executable permissions to the binary
+      sudo chmod +x /usr/local/bin/docker-compose
+  c) Test the installation
+      docker-compose --version
+
+
+********************************************************************************
+              How to dockerizing the application in Ubuntu
+********************************************************************************
+
+1) Move your project code(WebServices) to one folder
+  eg. I move to web
+2) If database present move databse related items to db
+3) create requirements.txt file and copy all the required librares name for your project
+    EG. pip freeze    #will give you all installed library
+
+4) create Dockerfile into your webservice folder
+    Mention all the neccary steps which you required to build your docker image
+
+    EG.
+    FROM python:3            #this tells that create onather container/server whihc is ubuntu machine has python3 installed
+    WORKDIR /usr/src/app     #specify that current working directory of your docker machine
+    COPY requirements.txt .  #copy the requiremetns.txt folder to that location for installing librareies for your project
+    RUN pip install --no-cache-dir -r requirements.txt      #install the library
+    COPY . .                 # copy your all local content to you docker machine (which have the same enviournment)
+    CMD ["python","app.py"]  # run the command which you used to start the WebServices
+
+5) create the docker-compose.yml file #here you have to mention all you build related information like all services
+6) run the below commands to make docker-compose build and UP
+    - sudo docker-compose build
+    - sudo docker-compose up   # this command will run the webservices inside the docker container
+
+
+********************************************************************************
+                    Installation of Mongo Db in Ubuntu
+********************************************************************************
+
+Steps-
+a)Install MongoDB on Ubuntu 18.04
+  sudo apt update
+  sudo apt install -y mongodb-org
+b)Manage MongoDB
+  sudo systemctl stop mongod.service
+  sudo systemctl start mongod.service
+  sudo systemctl enable mongod.service
+c)To connect to MongoDB shell
+  mongo --host 127.0.0.1:27017
+
+
+
+
+  ********************************************************************************
+                      Creation of Mongo Db Image in Docker container
+  ********************************************************************************
+
+1)create Dockerfile into your db folder
+  Mention all the neccary steps which you required to build your docker image
+
+    FROM mongo:3.6.4
+
+2)Define the sevice and links in docker-compose.systemctl
+    - links used for to some service is depended on db service we have to mention links under the other service which is dependent
+3) mention pymongo library in requirements.txt to intract python with mongodb
